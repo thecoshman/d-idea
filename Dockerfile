@@ -1,4 +1,3 @@
-#FROM alpine:3.6
 FROM frolvlad/alpine-glibc:alpine-3.6
 
 RUN apk update \
@@ -13,5 +12,4 @@ RUN echo 'Download Intellij IDE'\
  && tar -xzf /tmp/intellij.tar.gz --strip-components=1 -C /opt/intellij \
  && rm /tmp/intellij.tar.gz
 
-#CMD /usr/local/bin/intellij
 CMD /opt/intellij/bin/idea.sh
