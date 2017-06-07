@@ -7,7 +7,7 @@ RUN apk update \
 RUN apk add --update-cache openjdk8
 
 RUN echo 'Download Intellij IDE'\
- && wget -nv https://download.jetbrains.com/idea/ideaIC-2017.1.3.tar.gz -O /tmp/intellij.tar.gz \
+ && wget -nv https://download.jetbrains.com/idea/ideaIC-2017.1.4.tar.gz -O /tmp/intellij.tar.gz \
  && mkdir -p /opt/intellij \
  && tar -xzf /tmp/intellij.tar.gz --strip-components=1 -C /opt/intellij \
  && rm /tmp/intellij.tar.gz
