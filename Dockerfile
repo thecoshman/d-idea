@@ -12,4 +12,6 @@ RUN echo 'Download Intellij IDE'\
  && tar -xzf /tmp/intellij.tar.gz --strip-components=1 -C /opt/intellij \
  && rm /tmp/intellij.tar.gz
 
+RUN apk add git
+
 CMD /opt/intellij/bin/idea.sh
