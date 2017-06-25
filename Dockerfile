@@ -3,8 +3,8 @@ FROM frolvlad/alpine-glibc:alpine-3.6
 ENV IDE_VER='2017.1.4'
 
 RUN apk add --no-cache \
-    bash
-    git
+    bash \
+    git \
     openjdk8
 
 RUN apk add --no-cache \
