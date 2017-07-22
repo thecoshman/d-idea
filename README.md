@@ -3,7 +3,7 @@ IntelliJ IDE dockerised
 
 # Scope
 
-Pretty much just the latest (2017.1.4) IntelliJ CE with OpenJDK8, no additional plugins or what not. I may add more later, but for now, that's it. 
+Pretty much just the latest IntelliJ CE with OpenJDK8, no additional plugins or what not. I may add more later, but for now, that's it. 
 
 This is primarily for myself to use for Kotlin dev, but obviously is good for the likes of Java, Groovy, Scala etc.
 
@@ -17,17 +17,15 @@ docker run -tdi \
     -e DISPLAY=${DISPLAY} \
     -v ~/.Xauthority:/root/.Xauthority \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
-    -v ~/.intellij/.IdeaIC2017.1:/root/.IdeaIC2017.1 \
-    -v ~/.intellij/.java:/root/.java \
-    -v ~/.intellij/IdeaProjects:/root/IdeaProjects \
+    -v ~/.intellij/:/root/ \
     thecoshman/d-idea
 ```
 
 If only there was someway to make that easier to use, `*cough*` alias.
 
-Volume mounts `~/.intellij/*` in your home folder are to persist a few things between executions of the container. The first time you run this you will have to accept the licence and set some profile stuff, but after that, it's saved in your own home folder, along with projects. 
+The volume mount `~/.intellij/` in your home folder is to persist a few things between executions of the container. The first time you run this you will have to accept the licence and set some profile stuff, but after that, it's saved in your own home folder, along with projects. Upgrading between main releases of InteliJ (such as from 2017.1 to 2017.2) will require you 'import' settings (if you want) and these persist.
 
-Don't go changing the location of where IntelliJ stores porjects files, as any other location will not be persisted; you can update the volume though.
+Don't go changing the location of where IntelliJ stores projects files, as any other location will not be persisted; you can update the volume mount though.
 
 # Tags
 
