@@ -1,6 +1,6 @@
 FROM frolvlad/alpine-glibc:alpine-3.6
 
-ENV IDE_VER='2017.2'
+ENV IDE_VER='2017.2.3'
 
 RUN apk add --no-cache \
     bash \
