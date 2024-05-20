@@ -55,7 +55,7 @@ jobs:
           LATEST_VERSION: ${{ needs.get-versions.outputs.latest_version }}
           COMMIT_EMAIL: ${{ secrets.GIT_COMMIT_EMAIL }}
         run: |
-          echo "${LATEST_VERSION" > IDEAVersion
+          echo "${LATEST_VERSION}" > IDEAVersion
           git config user.name github-actions
           git config user.email "${COMMIT_EMAIL}"
           git add IDEAVersion
