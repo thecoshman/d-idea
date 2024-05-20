@@ -7,8 +7,8 @@ jobs:
   get-versions:
     runs-on: ubuntu-latest
     outputs:
-      latest_version: ${{ steps.version_finder.latest_version }}
-      current_version: ${{ steps.version_loader.current_version }}
+      latest_version: ${{ steps.version_finder.outputs.latest_version }}
+      current_version: ${{ steps.version_loader.outputs.current_version }}
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
