@@ -1,0 +1,25 @@
+#!/bin/bash
+
+VERSION_FILE="${1}"
+
+newest_semver() {
+  local PART="${3:-1}"
+  local A=$(echo "${1}" | cut -d '.' -f "${PART}")
+  local B=$(echo "${2}" | cut -d '.' -f "${PART}")
+
+  if [[ "${PART}" == 4 ]]; then
+    echo "${1}"
+  elif [[ "${A:-0}" -gt "${B:-0}" ]]; then
+    echo "${1}"
+  elif [[ "${A:-0}" -lt "${B:-0}" ]]; then
+    echo "${2}"
+  else
+    newest_semver "${1}" "${2}" $((${PART} + 1))
+  fi
+}
+
+VERSION=$(head -1 "${VERSION_FILE}")
+while read NEXT_VERSION; do
+  VERSION=$(newest_semver "${VERSION}" "${NEXT_VERSION}")
+done < <(tail +2 "${VERSION_FILE}")
+echo "${VERSION}"

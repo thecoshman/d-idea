@@ -1,0 +1,53 @@
+name: Check for newer InteliJ version
+
+jobs:
+  get-versions:
+    runs-on: ubuntu-latest
+    outputs:
+      latest_version: ${{ steps.version_finder.latest_version }}
+      current_version: ${{ steps.version_loader.current_version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y curl
+          sudo apt-get install -y wget
+          sudo apt-get install -y xmlstarlet
+      - name: Find latest InteliJ version
+        id: version_finder
+        run: |
+          curl --silent 'https://www.jetbrains.com/updates/updates.xml' > jetbrainsUpdates.xml
+          xml sel -t -v '//product[@name="IntelliJ IDEA"]/channel[@name="IntelliJ IDEA RELEASE"]/build/@version' jetbrainsUpdates > IDEAVersions
+          build_scripts/latest_version IDEAVersions > IntellijVersion
+          echo "Latest InteliJ version is $(cat IntellijVersion)"
+          echo "latest_version=$(cat IntellijVersion)" >> "$GITHUB_OUTPUT"
+      - name: Load current InteliJ version
+        id: version_loader
+        runs: |
+          CURRENT_VERSION='0.0.0'
+          if [[ -f IDEAVersion ]]; then
+            CURRENT_VERSION=$(cat IDEAVersion)
+          fi
+          echo "Current InteliJ version ${CURRENT_VERSION}"
+          echo "current_version=${CURRENT_VERSION}" >> "$GITHUB_OUTPUT"
+  # TODO Job that pulls latest image and checks if there are package updates 
+  commit_latest_version:
+    if: ${{ needs.get-versions.latest_version != needs.get-versions.current_version }}
+    needs: get-versions
+    runs-on: ubuntu-latest
+    outputs:
+      require_rebuild: ${{ steps.decision.require_rebuild }}
+    steps:
+      - name: Commit updated InteliJ version number
+        uses: actions/checkout@v4
+        env:
+          LATEST_VERSION: ${{ needs.get-versions.outputs.latest_version }}
+          COMMIT_EMAIL: ${{ secrets.GIT_COMMIT_EMAIL }}
+        runs: |
+          echo "${LATEST_VERSION" > IDEAVersion
+          git config user.name github-actions
+          git config user.email "${COMMIT_EMAIL}"
+          git add IDEAVersion
+          git commit -m "Update InteliJ version to ${LATEST_VERSION"
+          echo "Skipping push for now"
+          # git push
