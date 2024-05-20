@@ -20,7 +20,7 @@ jobs:
         id: version_finder
         run: |
           curl --silent 'https://www.jetbrains.com/updates/updates.xml' > jetbrainsUpdates.xml
-          xml sel -t -v '//product[@name="IntelliJ IDEA"]/channel[@name="IntelliJ IDEA RELEASE"]/build/@version' jetbrainsUpdates > IDEAVersions
+          xmlstarlet sel -t -v '//product[@name="IntelliJ IDEA"]/channel[@name="IntelliJ IDEA RELEASE"]/build/@version' jetbrainsUpdates.xml > IDEAVersions
           build_scripts/latest_version IDEAVersions > IntellijVersion
           echo "Latest InteliJ version is $(cat IntellijVersion)"
           echo "latest_version=$(cat IntellijVersion)" >> "$GITHUB_OUTPUT"
@@ -34,7 +34,7 @@ jobs:
           echo "Current InteliJ version ${CURRENT_VERSION}"
           echo "current_version=${CURRENT_VERSION}" >> "$GITHUB_OUTPUT"
   # TODO Job that pulls latest image and checks if there are package updates 
-  commit_latest_version:
+  commit-latest-version:
     if: ${{ needs.get-versions.latest_version != needs.get-versions.current_version }}
     needs: get-versions
     runs-on: ubuntu-latest
