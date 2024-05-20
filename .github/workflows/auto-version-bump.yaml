@@ -21,9 +21,9 @@ jobs:
         run: |
           curl --silent 'https://www.jetbrains.com/updates/updates.xml' > jetbrainsUpdates.xml
           xmlstarlet sel -t -v '//product[@name="IntelliJ IDEA"]/channel[@name="IntelliJ IDEA RELEASE"]/build/@version' jetbrainsUpdates.xml > IDEAVersions
-          build_scripts/latest_version IDEAVersions > IntellijVersion
-          echo "Latest InteliJ version is $(cat IntellijVersion)"
-          echo "latest_version=$(cat IntellijVersion)" >> "$GITHUB_OUTPUT"
+          LATEST_VERSION=$(build_scripts/latest_version IDEAVersions)
+          echo "Latest InteliJ version is ${LATEST_VERSION}"
+          echo "latest_version=${LATEST_VERSION}" >> "$GITHUB_OUTPUT"
       - name: Load current InteliJ version
         id: version_loader
         run: |
@@ -33,13 +33,21 @@ jobs:
           fi
           echo "Current InteliJ version ${CURRENT_VERSION}"
           echo "current_version=${CURRENT_VERSION}" >> "$GITHUB_OUTPUT"
+  confirm-versions:
+    runs-on: ubuntu-latest
+    needs: get-versions
+    steps:
+      - name: Echo versions
+        env:
+          LATEST_VERSION: ${{ needs.get-versions.outputs.latest_version }}
+          CURRENT_VERSION: ${{ needs.get-versions.outputs.current_version }}
+        run: |
+          echo "Latest: ${LATEST_VERSION}, Current: ${CURRENT_VERSION}"
   # TODO Job that pulls latest image and checks if there are package updates 
-  commit-latest-version:
+  commit-new-idea-version:
     if: ${{ needs.get-versions.latest_version != needs.get-versions.current_version }}
     needs: get-versions
     runs-on: ubuntu-latest
-    outputs:
-      require_rebuild: ${{ steps.decision.require_rebuild }}
     steps:
       - uses: actions/checkout@v4
       - name: Commit updated InteliJ version number
