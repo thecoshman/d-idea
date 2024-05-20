@@ -1,5 +1,8 @@
 name: Check for newer InteliJ version
 
+on:
+  workflow_dispatch
+
 jobs:
   get-versions:
     runs-on: ubuntu-latest
