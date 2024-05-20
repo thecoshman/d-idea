@@ -45,7 +45,7 @@ jobs:
           echo "Latest: ${LATEST_VERSION}, Current: ${CURRENT_VERSION}"
   # TODO Job that pulls latest image and checks if there are package updates 
   commit-new-idea-version:
-    if: ${{ needs.get-versions.latest_version != needs.get-versions.current_version }}
+    if: ${{ needs.get-versions.outputs.latest_version != needs.get-versions.outputs.current_version }}
     needs: get-versions
     runs-on: ubuntu-latest
     steps:
