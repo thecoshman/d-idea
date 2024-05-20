@@ -23,7 +23,7 @@ jobs:
           echo "latest_version=$(cat IntellijVersion)" >> "$GITHUB_OUTPUT"
       - name: Load current InteliJ version
         id: version_loader
-        runs: |
+        run: |
           CURRENT_VERSION='0.0.0'
           if [[ -f IDEAVersion ]]; then
             CURRENT_VERSION=$(cat IDEAVersion)
@@ -43,7 +43,7 @@ jobs:
         env:
           LATEST_VERSION: ${{ needs.get-versions.outputs.latest_version }}
           COMMIT_EMAIL: ${{ secrets.GIT_COMMIT_EMAIL }}
-        runs: |
+        run: |
           echo "${LATEST_VERSION" > IDEAVersion
           git config user.name github-actions
           git config user.email "${COMMIT_EMAIL}"
