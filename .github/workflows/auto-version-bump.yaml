@@ -38,8 +38,8 @@ jobs:
     outputs:
       require_rebuild: ${{ steps.decision.require_rebuild }}
     steps:
+      - uses: actions/checkout@v4
       - name: Commit updated InteliJ version number
-        uses: actions/checkout@v4
         env:
           LATEST_VERSION: ${{ needs.get-versions.outputs.latest_version }}
           COMMIT_EMAIL: ${{ secrets.GIT_COMMIT_EMAIL }}
