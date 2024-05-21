@@ -59,6 +59,5 @@ jobs:
           git config user.name github-actions
           git config user.email "${COMMIT_EMAIL}"
           git add IDEAVersion
-          git commit -m "Update InteliJ version to ${LATEST_VERSION}"
-          echo "Skipping push for now"
-          # git push
+          git commit -m "Update to InteliJ version ${LATEST_VERSION}"
+          git push
