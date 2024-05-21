@@ -13,7 +13,7 @@ jobs:
           USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
         run: |
-          docker login -u "${USERNAME}"" -p "${PASSWORD}"
+          docker login -u "${USERNAME}" -p "${PASSWORD}"
       - name: Build image
         run: |
           INTELLIJ_VERSION=$(cat IDEAVersion)
