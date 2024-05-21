@@ -1,0 +1,29 @@
+name: Build and push Docker image
+
+on:
+  workflow_dispatch
+
+jobs:
+  buid-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          echo '[INFO] No dependencies required... apparently'
+      - name: Login to Dockerhub
+        env:
+          USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: |
+          echo '[WARNING] Step not yet enabled'
+          echo 'docker login -u "${USERNAME}"" -p "${PASSWORD}"'
+      - name: Build image
+        run: |
+          INTELLIJ_VERSION=$(cat IDEAVersion)
+          echo "[INFO] Building d-idea image for Intelij version ${INTELLIJ_VERSION}"
+          docker build  --build-arg "INTELLIJ_VERSION=${INTELLIJ_VERSION}" --tag '${{ secrets.DOCKERHUB_USERNAME }}/d-idea:latest' .
+      - name: Push image
+        run: |
+          echo '[WARNING] Step not yet enabled'
+          echo 'docker push ${{ secrets.DOCKERHUB_USERNAME }}/d-idea:latest'
