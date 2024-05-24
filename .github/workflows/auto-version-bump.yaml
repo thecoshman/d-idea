@@ -60,7 +60,7 @@ jobs:
         env:
           USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          SIMULATED_UPGRADE_RESULTS=$(docker run --tty --rm ${{ secrets.DOCKERHUB_USERNAME }}/d-idea:latest sh -c 'apk update && apk -U upgrade --simulate')
+          SIMULATED_UPGRADE_RESULTS=$(docker run --tty --rm ${{ secrets.DOCKERHUB_USERNAME }}/d-idea:latest sh -c 'apk update && apk --update-cache upgrade --simulate')
           UPGRADEABLE_PACKAGES=$(echo ${SIMULATED_UPGRADE_RESULTS} | grep --only-matching 'Upgrading' | wc -l)
           if [[ "${UPGRADEABLE_PACKAGES}" -eq 0 ]]; then
             echo '[INFO] No packages detected as upgradable'
@@ -69,7 +69,7 @@ jobs:
           fi
           echo "upgradeable=${UPGRADEABLE_PACKAGES}" >> "$GITHUB_OUTPUT"
   trigger-image-build:
-    if: ${{ needs.get-versions.outputs.latest_version != needs.get-versions.outputs.current_version  || needs.check-package-upgrades.package_upgrade_count > 0 }}
+    if: ${{ always() && ( needs.get-versions.outputs.latest_version != needs.get-versions.outputs.current_version || needs.check-package-upgrades.package_upgrade_count > 0 ) }}
     needs: [commit-new-idea-version, check-package-upgrades]
     runs-on: ubuntu-latest
     steps:
