@@ -61,3 +61,33 @@ jobs:
           git add IDEAVersion
           git commit -m "Update to InteliJ version ${LATEST_VERSION}"
           git push
+  check-package-upgrades:
+    runs-on: ubuntu-latest
+    outputs:
+      package_upgrade_count: ${{ steps.upgrade_test.outputs.upgradeable }}
+    steps:
+      - name: Login to Dockerhub
+        env:
+          USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Test latest container for package upgrades
+        id: upgrade_test
+        env:
+          USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          SIMULATED_UPGRADE_RESULTS=$(docker run -it --rm ${{ secrets.DOCKERHUB_USERNAME }}/d-idea:latest sh -c 'apk update && apk -U upgrade --simulate')
+          UPGRADEABLE_PACKAGES=$(echo ${SIMULATED_UPGRADE_RESULTS} | grep --only-matching 'Upgrading' | wc -l)
+          if [[ "${UPGRADEABLE_PACKAGES}" -eq 0 ]]; then
+            echo '[INFO] No packages detected as upgradable'
+          else
+            echo "[INFO] Detected ${UPGRADEABLE_PACKAGES} packages that can be upgraded"
+          fi
+          echo "upgradeable=${UPGRADEABLE_PACKAGES}" >> "$GITHUB_OUTPUT"
+  trigger-image-build:
+    if: ${{ needs.get-versions.outputs.latest_version != needs.get-versions.outputs.current_version  || needs.check-package-upgrades.package_upgrade_count > 0 }}
+    needs: [get-versions, check-package-upgrades]
+    runs-on: ubuntu-latest
+    steps:
+      - name: test
+        run: |
+          echo 'Should now call build image workflow'
