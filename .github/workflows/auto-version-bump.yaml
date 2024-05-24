@@ -70,7 +70,7 @@ jobs:
           echo "upgradeable=${UPGRADEABLE_PACKAGES}" >> "$GITHUB_OUTPUT"
   trigger-image-build:
     if: ${{ needs.get-versions.outputs.latest_version != needs.get-versions.outputs.current_version  || needs.check-package-upgrades.package_upgrade_count > 0 }}
-    needs: [get-versions, check-package-upgrades]
+    needs: [commit-new-idea-version, check-package-upgrades]
     runs-on: ubuntu-latest
     steps:
       - name: test
