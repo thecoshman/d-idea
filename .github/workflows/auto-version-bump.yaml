@@ -33,17 +33,6 @@ jobs:
           fi
           echo "Current InteliJ version ${CURRENT_VERSION}"
           echo "current_version=${CURRENT_VERSION}" >> "$GITHUB_OUTPUT"
-  confirm-versions:
-    runs-on: ubuntu-latest
-    needs: get-versions
-    steps:
-      - name: Echo versions
-        env:
-          LATEST_VERSION: ${{ needs.get-versions.outputs.latest_version }}
-          CURRENT_VERSION: ${{ needs.get-versions.outputs.current_version }}
-        run: |
-          echo "Latest: ${LATEST_VERSION}, Current: ${CURRENT_VERSION}"
-  # TODO Job that pulls latest image and checks if there are package updates 
   commit-new-idea-version:
     if: ${{ needs.get-versions.outputs.latest_version != needs.get-versions.outputs.current_version }}
     needs: get-versions
@@ -71,7 +60,7 @@ jobs:
         env:
           USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          SIMULATED_UPGRADE_RESULTS=$(docker run -it --rm ${{ secrets.DOCKERHUB_USERNAME }}/d-idea:latest sh -c 'apk update && apk -U upgrade --simulate')
+          SIMULATED_UPGRADE_RESULTS=$(docker run --tty --rm ${{ secrets.DOCKERHUB_USERNAME }}/d-idea:latest sh -c 'apk update && apk -U upgrade --simulate')
           UPGRADEABLE_PACKAGES=$(echo ${SIMULATED_UPGRADE_RESULTS} | grep --only-matching 'Upgrading' | wc -l)
           if [[ "${UPGRADEABLE_PACKAGES}" -eq 0 ]]; then
             echo '[INFO] No packages detected as upgradable'
