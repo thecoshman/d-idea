@@ -21,7 +21,8 @@ RUN apk add --no-cache \
   fontconfig \
   gcompat \
   msttcorefonts-installer \
-  openjdk21
+  openjdk21 \
+  apk upgrade --no-cache --update-cache
 
 RUN update-ms-fonts
 
