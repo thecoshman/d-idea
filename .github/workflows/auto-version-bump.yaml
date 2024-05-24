@@ -73,13 +73,6 @@ jobs:
           fi
           echo "upgradeable=${UPGRADEABLE_PACKAGES}" >> "$GITHUB_OUTPUT"
   trigger-image-build:
+    if: ${{ needs.get-versions.outputs.latest_version != needs.get-versions.outputs.current_version || needs.check-package-upgrades.outputs.package_upgrade_count > 0 }}
     needs: [commit-new-idea-version, check-package-upgrades]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger image build workflow
-        if: ${{ needs.get-versions.outputs.latest_version != needs.get-versions.outputs.current_version || needs.check-package-upgrades.outputs.package_upgrade_count > 0 }}
-        uses: ./.github/workflows/build-image.yaml
-      - name: No need to build
-        if: ${{ needs.get-versions.outputs.latest_version == needs.get-versions.outputs.current_version && needs.check-package-upgrades.outputs.package_upgrade_count == 0 }}
-        run: |
-          echo '[INFO] InteliJ version already latest and no packages to upgrade - NOT rebuilding image'
+    uses: ./.github/workflows/build-image.yaml
