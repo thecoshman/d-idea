@@ -1,4 +1,4 @@
-name: Check for newer InteliJ version
+name: Check if image needs rebuilding for updates
 
 on:
   workflow_dispatch
@@ -34,12 +34,12 @@ jobs:
           echo "Current InteliJ version ${CURRENT_VERSION}"
           echo "current_version=${CURRENT_VERSION}" >> "$GITHUB_OUTPUT"
   commit-new-idea-version:
-    if: ${{ needs.get-versions.outputs.latest_version != needs.get-versions.outputs.current_version }}
     needs: get-versions
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Commit updated InteliJ version number
+        if: ${{ needs.get-versions.outputs.latest_version != needs.get-versions.outputs.current_version }}
         env:
           LATEST_VERSION: ${{ needs.get-versions.outputs.latest_version }}
           COMMIT_EMAIL: ${{ secrets.GIT_COMMIT_EMAIL }}
@@ -50,6 +50,10 @@ jobs:
           git add IDEAVersion
           git commit -m "Update to InteliJ version ${LATEST_VERSION}"
           git push
+      - name: Skipping committing new version
+        if: ${{ needs.get-versions.outputs.latest_version == needs.get-versions.outputs.current_version }}
+        run: |
+          echo 'No new IntelliJ version to commit'
   check-package-upgrades:
     runs-on: ubuntu-latest
     outputs:
@@ -69,10 +73,14 @@ jobs:
           fi
           echo "upgradeable=${UPGRADEABLE_PACKAGES}" >> "$GITHUB_OUTPUT"
   trigger-image-build:
-    if: ${{ always() && ( needs.get-versions.outputs.latest_version != needs.get-versions.outputs.current_version || needs.check-package-upgrades.package_upgrade_count > 0 ) }}
     needs: [commit-new-idea-version, check-package-upgrades]
     runs-on: ubuntu-latest
     steps:
-      - name: test
+      - name: Trigger image build workflow
+        if: ${{ needs.get-versions.outputs.latest_version != needs.get-versions.outputs.current_version || needs.check-package-upgrades.package_upgrade_count > 0 }}
         run: |
-          echo 'Should now call build image workflow'
+          echo '[DEBUG] Should now call build image workflow'
+      - name: No need to build
+        if: ${{ needs.get-versions.outputs.latest_version == needs.get-versions.outputs.current_version && needs.check-package-upgrades.package_upgrade_count == 0 }}
+        run: |
+          echo '[INFO] InteliJ version already latest and no packages to upgrade - NOT rebuilding image'
