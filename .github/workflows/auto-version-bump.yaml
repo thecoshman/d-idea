@@ -77,10 +77,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger image build workflow
-        if: ${{ needs.get-versions.outputs.latest_version != needs.get-versions.outputs.current_version || needs.check-package-upgrades.package_upgrade_count > 0 }}
+        if: ${{ needs.get-versions.outputs.latest_version != needs.get-versions.outputs.current_version || needs.check-package-upgrades.outputs.package_upgrade_count > 0 }}
         run: |
           echo '[DEBUG] Should now call build image workflow'
       - name: No need to build
-        if: ${{ needs.get-versions.outputs.latest_version == needs.get-versions.outputs.current_version && needs.check-package-upgrades.package_upgrade_count == 0 }}
+        if: ${{ needs.get-versions.outputs.latest_version == needs.get-versions.outputs.current_version && needs.check-package-upgrades.outputs.package_upgrade_count == 0 }}
         run: |
           echo '[INFO] InteliJ version already latest and no packages to upgrade - NOT rebuilding image'
