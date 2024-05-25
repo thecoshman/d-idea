@@ -2,6 +2,11 @@ name: Build and push Docker image
 
 on:
   workflow_call:
+  secrets:
+    USERNAME:
+      required: true
+    PASSWORD:
+      required: true
 
 jobs:
   buid-image:
