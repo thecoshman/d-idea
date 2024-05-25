@@ -18,7 +18,7 @@ MAINTAINER thecoshman "d-idea@thecoshman.com"
 COPY --from=builder /tmp/intellij /opt/intellij
 
 RUN apk add --no-cache \
-  e2fsprog \
+  e2fsprogs \
   fontconfig \
   gcompat \
   msttcorefonts-installer \

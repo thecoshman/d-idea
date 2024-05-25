@@ -50,7 +50,7 @@ honestly don't fully understand what it is doing.
 There's a few packages that are installed in the Dockerfile for the various reasons.
 As some sort of documentation, here's what is installed along with why.
 
-* `e2fsprog` - Resolves a startup error for InteliJ wanting the `e2p` library
+* `e2fsprogs` - Resolves a startup error for InteliJ wanting the `e2p` library
 * `fontconfig` & `msttcorefonts-installer` - For basic font handling in InteliJ, seems to be required
 * `gcompat` - The `glib` compatibility required for the JDK
 * `openjdk21` - The JDK obviously
