@@ -2,11 +2,11 @@ name: Build and push Docker image
 
 on:
   workflow_call:
-  secrets:
-    USERNAME:
-      required: true
-    PASSWORD:
-      required: true
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_PASSWORD:
+        required: true
 
 jobs:
   buid-image:
