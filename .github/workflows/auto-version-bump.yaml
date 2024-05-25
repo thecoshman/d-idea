@@ -1,7 +1,9 @@
 name: Check if image needs rebuilding for updates
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+  schedule:
+    - cron: '20 4 * * *'
 
 jobs:
   get-versions:
