@@ -15,10 +15,14 @@ jobs:
         run: |
           docker login -u "${USERNAME}" -p "${PASSWORD}"
       - name: Build image
+        env:
+          USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
           INTELLIJ_VERSION=$(cat IDEAVersion)
           echo "[INFO] Building d-idea image for Intelij version ${INTELLIJ_VERSION}"
-          docker build  --build-arg "INTELLIJ_VERSION=${INTELLIJ_VERSION}" --tag '${{ secrets.DOCKERHUB_USERNAME }}/d-idea:latest' .
+          docker build  --build-arg "INTELLIJ_VERSION=${INTELLIJ_VERSION}" --tag "${USERNAME}/d-idea:latest" .
       - name: Push image
+        env:
+          USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/d-idea:latest
+          docker push "${USERNAME}/d-idea:latest"
