@@ -14,6 +14,7 @@ This is primarily for myself to use for Kotlin dev, but obviously is good for th
 Start the container with the following very concise command:
 
 ```
+xhost +local:docker
 docker run -tid \
     --net=host \
     -e DISPLAY=${DISPLAY} \
@@ -39,8 +40,20 @@ Otherwise, I'll just consider it a waste of time :P
 
 # X11 magic
 
-Getting the X11 stuff to work is fairly simple, it's all down to the invocation with the `docker run` command.
+Getting the X11 stuff to work is fairly simple, it's all down to the invocation with the `docker run` command, combined with `xhost`.
 To be clear, it's the `--net=host -e DISPLAY=${DISPLAY} ~/.Xauthority:/root/.Xauthority -v /tmp/.X11-unix:/tmp/.X11-unix` that allows the image to make use of your host's X11 server.
+Prior to starting the container you would runbn `xhost +local:docker` (no `sudo` required!) which will allow connections to your X11 server;
+honestly don't fully understand what it is doing.
+
+# Notes about installed packages
+
+There's a few packages that are installed in the Dockerfile for the various reasons.
+As some sort of documentation, here's what is installed along with why.
+
+* `e2fsprog` - Resolves a startup error for InteliJ wanting the `e2p` library
+* `fontconfig` & `msttcorefonts-installer` - For basic font handling in InteliJ, seems to be required
+* `gcompat` - The `glib` compatibility required for the JDK
+* `openjdk21` - The JDK obviously
 
 # Credits & Acknowledgments 
 

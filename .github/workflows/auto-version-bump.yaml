@@ -74,7 +74,7 @@ jobs:
             echo "[INFO] Detected ${UPGRADEABLE_PACKAGES} packages that can be upgraded"
           fi
           echo "upgradeable=${UPGRADEABLE_PACKAGES}" >> "$GITHUB_OUTPUT"
-  trigger-image-build:
+  build-image:
     if: ${{ needs.get-versions.outputs.latest_version != needs.get-versions.outputs.current_version || needs.check-package-upgrades.outputs.package_upgrade_count > 0 }}
     needs: [commit-new-idea-version, check-package-upgrades]
     uses: ./.github/workflows/build-image.yaml
