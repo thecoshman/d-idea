@@ -21,7 +21,9 @@ RUN apk add --no-cache \
   e2fsprogs \
   fontconfig \
   gcompat \
+  git \
   msttcorefonts-installer \
+  nss \
   openjdk21
 
 RUN apk upgrade --no-cache --update-cache
@@ -29,5 +31,7 @@ RUN apk upgrade --no-cache --update-cache
 RUN update-ms-fonts
 
 RUN fc-cache -f
+
+ENV HOME=/home
 
 CMD /opt/intellij/bin/idea.sh

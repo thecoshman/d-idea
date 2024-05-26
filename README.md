@@ -15,13 +15,18 @@ Start the container with the following very concise command:
 
 ```
 xhost +local:docker
-docker run -tid \
-    --net=host \
-    -e DISPLAY=${DISPLAY} \
-    -v ~/.Xauthority:/root/.Xauthority \
-    -v /tmp/.X11-unix:/tmp/.X11-unix \
-    -v ~/.intellij/:/root/ \
-    thecoshman/d-idea
+docker run --interactive --tty --rm \
+  --net=host \
+  --env DISPLAY=${DISPLAY} \
+  --volume ~/.Xauthority:/root/.Xauthority \
+  --volume /tmp/.X11-unix:/tmp/.X11-unix \
+  --user "$(id -u):$(id -g)" \
+  --workdir="/home/$USER" \
+  --volume="/etc/group:/etc/group:ro" \
+  --volume="/etc/passwd:/etc/passwd:ro" \
+  --volume="/etc/shadow:/etc/shadow:ro" \
+  --volume /home/$USER:/home/$USER \
+  thecoshman/d-idea
 ```
 
 If only there was someway to make that easier to use, `*cough*` alias.
@@ -29,6 +34,12 @@ If only there was someway to make that easier to use, `*cough*` alias.
 The volume mount `~/.intellij/` in your home folder is to persist a few things between executions of the container.
 The first time you run this you will have to accept the license and set some profile stuff, but after that, it's saved in your own home folder, along with projects.
 Upgrading between main releases of InteliJ (such as from 2017.1 to 2017.2) will require you 'import' settings (if you want) and these to persist.
+
+The `HOST_USER_ID` and `HOST_USERNAME` are used so that a user can be created dynamically within the container that matches your host user.
+By doing this, the files that are created whilst running the container will match those of the user starting this container, thus avoiding mismatched permissions.
+
+If you are in the habit of having a folder where you clone your projects to, and want that accessible within the container, you'll need to volume mount that too.
+If you have existing InteliJ projects, you can either start this container, so that you get a brand new.
 
 Don't go changing the location of where IntelliJ stores projects files, as any other location will not be persisted; you can update the volume mount though.
 
@@ -53,6 +64,8 @@ As some sort of documentation, here's what is installed along with why.
 * `e2fsprogs` - Resolves a startup error for InteliJ wanting the `e2p` library
 * `fontconfig` & `msttcorefonts-installer` - For basic font handling in InteliJ, seems to be required
 * `gcompat` - The `glib` compatibility required for the JDK
+* `git` - Seems InteliJ likes to do 'git' stuff
+* `nss` - Used to help run as 'you', the user starting the container
 * `openjdk21` - The JDK obviously
 
 # Credits & Acknowledgments 
