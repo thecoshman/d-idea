@@ -5,7 +5,7 @@ ARG INTELLIJ_VERSION
 RUN apk add --no-cache \
   wget
 
-RUN wget --progress=dot:giga "https://download.jetbrains.com/idea/ideaIC-${INTELLIJ_VERSION}.tar.gz" -O /tmp/intellij.tar.gz
+RUN wget --progress=dot:giga "https://download.jetbrains.com/idea/idea-${INTELLIJ_VERSION}.tar.gz" -O /tmp/intellij.tar.gz
 
 RUN mkdir -p /tmp/intellij
 
